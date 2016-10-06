@@ -91,7 +91,7 @@ SynthDefPool {
 			GUI.button.new(w, wrect.copy.left_(wrect.width*4/6).width_(wrect.width/6).height_(50).insetBy(5, 15))
 				.states_([["usage"]])
 				.action_{ Document.new(string:"s.boot;
-SynthDefPool.at(\\"++listview.item++").memStore; // ensure the server knows about it
+SynthDefPool.at(\\"++listview.item++").add; // ensure the server knows about it
 x = Synth(\\"++listview.item++", [\\freq, 440]);
 x.set(\\freq, 330);
 "
@@ -147,11 +147,11 @@ x.set(\\freq, 330);
 		dict.do{|def| def.store(libname, completionMsg, keepDef, mdPlugin)};
 	}
 	*memStore { |libname=\global, completionMsg, keepDef = true| 
-		^global.memStore(libname, completionMsg, keepDef)
+		^global.add(libname, completionMsg, keepDef)
 	}
 	memStore { |libname=\global, completionMsg, keepDef = true|
 		this.scanAll;
-		dict.do{|def| def.memStore(libname, completionMsg, keepDef)};
+		dict.do{|def| def.add(libname, completionMsg, keepDef)};
 	}
 
 
