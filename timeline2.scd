@@ -19,7 +19,6 @@
 			{rout.reset.play}
 			{rout.stop}
 		};
-		s.offset=(s.win.value*s.time);
 		toggle.(s.tmpPattern);
 		toggle.(s.routine);
 	},
@@ -28,12 +27,18 @@
 			Pspawner({arg sp;
 				loop{
 					sp.seq(
-						Pfset({s.cl=TempoClock()},
-							PFF(Pfunc{s.offset},
-								Psync(
-								*[s.pattern]++(Pfunc
-									{((s.time-s.offset))}.asStream !2)
-						)))); 
+						p{ arg in;
+							var str, time;
+							s.cl=TempoClock();
+							str=PFF(Pfunc{s.offset},s.pattern)
+							.asStream;
+							time=Ptime().asStream;
+							loop{
+								if(time.next<(s.time-s.offset))
+								{in=str.next(in).yield}
+								{nil.yield}
+							}
+						}); 
 					"on revient !".postln;
 					s.offset_(0);
 					defer{
@@ -54,7 +59,8 @@
 			arg self;
 			if(s.time==inf){} // do nothing
 			{
-				s[\offset]=self.value*s.time;				
+				s[\offset]=self.value*s.time;
+				s.offset.postln;
 				s.toggle(true)
 			}
 		};
@@ -77,5 +83,6 @@
 Window.closeAll;
 a=~timeline.ini; a.time_(10);
 a.win.parent.alwaysOnTop_(true);
-a.newTime(200)
+
 ) 
+a.newTime(20)
