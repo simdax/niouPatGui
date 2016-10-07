@@ -17,11 +17,13 @@ pat: {arg s;
 			\dur,    Pseed(Pfunc{s.params.seedDur},Prand([1,2,3,4],inf)),
 			\octave, Pfunc{s.params.octave},
 			\stretch, Pfunc{s.params.stretch.reciprocal},
-		).finDur(Pfunc{s.params.time}.asStream).repeat
-	)
+		).trace.finDur(Pfunc{s.params.time}.asStream)
+	);
 }, init:{arg s, pa;
 	var gui;
-	s.pat.value;
+	try{pa.decorator}??{pa.addFlowLayout};
+	s.postln;
+	s.pat; s.patPro.postln;
 	gui=EnvirGui(s.params,6,pa);
 	s.specs.keysValuesDo{arg k,v;
 		k.asArray.do{ arg y;
@@ -29,7 +31,7 @@ pat: {arg s;
 		}
 	}
 }
-);
+)
 
 
 )
