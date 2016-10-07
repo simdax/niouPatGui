@@ -53,24 +53,27 @@ SynthDefPool {
 
 	*gui { arg parent ... args;
 		var vk=(root+/+"VK.scd").load;
+		var patGui=(root+/+"pattGui.scd").load;
 		Server.default.waitForBoot{
 			parent ?? {parent=FlowView()};
 			global.do{arg x;
-				var gui, vkk;
+				var gui, vkk, pg;
 				gui=x.value(parent);
 				vkk=vk.copy; vkk.fen(parent);
-				gui.bounds.postln;
-				gui.children
-				.detect{arg x;x.class==QPopUpMenu}
+				pg=patGui.deepCopy; pg.init(parent);
+				gui.children[0]
 				.addAction{
 					arg self;
 					vkk.instr=self.item;
-				}
+					pg.instrument=self.item;
+					2.do{pg.patPro.postln.toggle};
+				}.valueAction_(0);
+				gui.children[1]
+				.addAction{
+					arg self;
+					pg.patPro.toggle;
+				};
 			};
-			// SimpleController(vk, {arg qui, que,quoi;
-			// 	vk.instr={que.postln}
-			// });
-			//			
 		};
 	}
 	prGui {
@@ -91,22 +94,23 @@ SynthDefPool {
 			startButton = GUI.button.new(w, Rect(listview.bounds.right+10, listview.bounds.top, 65, listview.bounds.height))				.states_([
 				["Start", Color.black, Color(0.5, 0.7, 0.5)],
 				["Stop", Color.white, Color(0.7, 0.5, 0.5)]
-			]).action_{|widg|
-				if(widg.value==0){
-					if(aSynth.notNil){aSynth.free; aSynth=nil };
-				}{
-					aSynth = Synth(listview.item);
-					OSCresponderNode(Server.default.addr, '/n_end', { |time, resp, msg|
-						if(aSynth.notNil and: {msg[1]==aSynth.nodeID}){
-							// Synth has freed (itself?) so ensure button state is consistent
-							{startButton.value=0}.defer;
-						};
-					}).add.removeWhenDone;
-				}
-			};
-			cmdPeriodFunc = { startButton.value = 0; };
-			CmdPeriod.add(cmdPeriodFunc);
+			])// .action_{|widg|
+			// 	if(widg.value==0){
+			// 		if(aSynth.notNil){aSynth.free; aSynth=nil };
+			// 	}{
+			// 		aSynth = Synth(listview.item);
+			// 		OSCresponderNode(Server.default.addr, '/n_end', { |time, resp, msg|
+			// 			if(aSynth.notNil and: {msg[1]==aSynth.nodeID}){
+			// 				// Synth has freed (itself?) so ensure button state is consistent
+			// 				{startButton.value=0}.defer;
+			// 			};
+			// 		}).add.removeWhenDone;
+			// 	}
+			// };
+			// cmdPeriodFunc = { startButton.value = 0; };
+			// CmdPeriod.add(cmdPeriodFunc);
 			// stop the sound when window closes and remove cmdPeriodFunc.
+			;
 			w.onClose = {
 				if(aSynth.notNil) {
 					aSynth.free;
@@ -143,6 +147,7 @@ x.set(\\freq, 330);
 			};
 			mdv_updater.value;
 			listview.action = mdv_updater;
+			//			listview.valueAction(0); // to init
 			w
 		}
 	}
