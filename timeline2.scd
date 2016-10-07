@@ -18,11 +18,11 @@
 			Pspawner({arg sp;
 				loop{
 					sp.seq(
-						Pfindur(
+						Pfset({s.cl=SystemClock()},Pfindur(
 							Pfunc
 							{(s.time-s.offset.postln)}.asStream,
 							PFF(Pfunc{s.offset}, s.pattern)
-						)
+						))
 					);
 					"on revient !".postln;
 					s.offset_(0);
@@ -66,7 +66,7 @@
 )
 )
 
-// a=~timeline
+a=~timeline
 
-// a.ini
-// a.time_(10)
+a.ini
+a.time_(10)
