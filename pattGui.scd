@@ -10,7 +10,7 @@ pat: {arg s;
 		\octave, Pfunc{s.params.octave},
 		\stretch, Pfunc{s.params.stretch.reciprocal},
 	).finDur(Pfunc{s.params.time}.asStream).repeat
-}, gi:{arg s, pa; s.pat.play; s.params.gui(3)}
+}, gi:{arg s, pa; s.pat.play; EnvirGui(s.params,6,pa)}
 );
 
 
