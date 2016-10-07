@@ -23,8 +23,8 @@ SynthDefPool {
 	*initClass {
 		global=IdentityDictionary();
 		StartUp.add{
-			root=this.filenameSymbol.asString.dirname +/+"pools";
-			PathName(root).folders.do{
+			root=this.filenameSymbol.asString.dirname;
+			PathName(root+/+"pools").folders.do{
 				arg x;
 				var gui=this.new(x.absolutePath).prGui;
 				global.put(x.folderName.asSymbol, gui);
@@ -32,7 +32,6 @@ SynthDefPool {
 		}
 	}
 	
-
 	*at { |key|
 		^global.at(key)
 	}
@@ -53,27 +52,39 @@ SynthDefPool {
 	}
 
 	*gui { arg parent ... args;
+		var vk=(root+/+"VK.scd").load;
 		Server.default.waitForBoot{
-			parent ?? {parent=FlowView(nil, 500@400)};
-			global.do(_.value(parent))		
-		}
+			parent ?? {parent=FlowView()};
+			global.do{arg x;
+				var gui, vkk;
+				gui=x.value(parent);
+				vkk=vk.copy; vkk.fen(parent);
+				gui.bounds.postln;
+				gui.children
+				.detect{arg x;x.class==QPopUpMenu}
+				.addAction{
+					arg self;
+					vkk.instr=self.item;
+				}
+			};
+			// SimpleController(vk, {arg qui, que,quoi;
+			// 	vk.instr={que.postln}
+			// });
+			//			
+		};
 	}
 	prGui {
 		var w, list, listview, wrect, metadataview, mdv_updater, startButton, aSynth, cmdPeriodFunc;
 		
 		//dict.reject(_.isNil);
 		this.store(PathName(poolpath).folderName);
-		^{ arg parent;
-
-			parent !? {w=parent}
-			??
-			{w = GUI.window.new("<SynthDefPool>", Rect(0, 0, 600, 100).center_(GUI.window.screenBounds.center))}
-			; 
-			
+		^{ arg parent= GUI.window.new("<SynthDefPool>", Rect(0, 0, 600, 100).center_(GUI.window.screenBounds.center));
+		
+			w=View(parent, parent.bounds.height_(50));
 			list = dict.keys(Array);
 			list.sort;
 			
-			wrect = w.asView.bounds;
+			wrect = w.asView.bounds.extent.asRect;
 			listview = GUI.popUpMenu.new(w, wrect.copy.width_(wrect.width/2 - 75).height_(50).insetBy(5, 15)).items_(list);
 			
 			// add a button to start and stop the sound.
@@ -128,12 +139,14 @@ x.set(\\freq, 330);
 				// 		++
 				// 	if(desc.metadata[\tags].notNil){"Tags:   %\n".format(desc.metadata[\tags].join(", "))}{""};
 				// } ?? {""}
+				//				listview.changed(\item)
 			};
 			mdv_updater.value;
 			listview.action = mdv_updater;
-			w.front
+			w
 		}
 	}
+	
 	
 	*defnames {
 		^global.defnames
