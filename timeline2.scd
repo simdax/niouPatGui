@@ -30,7 +30,6 @@
 		var b=0;
 		while{b<1}{
 			var time={(s.time/s.fps).reciprocal}.value;
-			time.postln;
 			{
 				b=s.win.value;
 				s.win.value_(b+time);
@@ -41,10 +40,10 @@
 	}).quant_(0),
 	routines:{arg s; [s.routine, s.esp]},
 	// UI
-	ini:{ arg s, parent=Window("timeline", 200@40).front;
+	guigui:{ arg s, parent=Window("timeline", 200@40).front;
 		s.routine.envir_(s); s.esp.envir_(s);
-		s.win=Slider(parent, 200@30)
-		.onClose_{s.routine.clear; s.esp.clear}
+ 		s.win=Slider(parent, 200@30)
+		//	.onClose_{s.routine.clear; s.esp.clear}
 		// stop always
 		.keyDownAction_{
 			arg self, c;
@@ -67,8 +66,8 @@
 			if(s.time==inf){} // do nothing
 			{
 				s[\offset]=self.value*s.time;
-				if(s.playing.postln){s.esp.stop.play};
-				if(s.paused.postln){s.esp.stop.play.pause};
+				if(s.playing.postln){s.esp.stop.play}
+				{if(s.paused.postln){s.esp.stop.play.pause}};
 				//	s.keyDownAction.value
 			}
 		};
@@ -78,34 +77,23 @@
 )
 ( 
 s.waitForBoot{
-Window.closeAll; 0.1.wait;
+	Window.closeAll;
+	0.1.wait;
 	a=nil;
-	a=~timeline.copy;
-	a.postln;
-	a.ini.value;
+	w=Window("io", 200@60).front;
+	a=~timeline;
+	a.guigui(w.postln);
 	//a.ini2.value;
 	a.time_(4);
 	a.win.parent.alwaysOnTop_(true);
-	NumberBox(a.win.parent, Rect(40, 0, 20, 20 ))
+	NumberBox(a.win.parent, Rect(0, 40, 100, 20 ));
+	f=StaticText(a.win.parent, Rect(100, 40, 100, 20 ));
+	TaskProxy({loop{
+		defer{var t=a.win.value*a.time;
+			f.string_(t)} ;0.2.wait}
+	}).play;
 }) 
 
-a.time
-a.newTime(4)
-a.routine.envir_((io:8)
-)
-
-a.esp.pause
-a.esp.resume
-a.routines.do(_.resume)
-
-a.newTime(20)c
-
-b=TempoClock()
-b.sched(10, {a.stop})
-b.queue
-
-a=Pbind().trace.play
-
-Quarks.gui
 
 
+a.esp.stop.play
