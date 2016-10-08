@@ -1,17 +1,23 @@
 (
 ~timeline=(
 	// time manip
-	recommence:{"grosse function ! ".postln},
+	recommence:{ arg s;
+		s.offset=0;
+		s.esp.stop.play;
+		defer{s.win.value_(0)};
+		s.routine.stop.play;
+		"grosse function ! ".postln
+	},
 	newTime:{arg s, new, post=false;
 		var pourcentage;
 		var niou;
-		var now=s.time*s.win.value; now.postln;
+		var now=s.time*s.win.value;
+		s.time=new; s.routine.envir_(s);
 		if(new<now){s.recommence}
 		{
-			pourcentage=s.time/new; pourcentage.postln;
+			pourcentage=s.time/new; pourcentage;
 			//action
 			s.offset=s.win.value=(s.win.value*pourcentage);
-			s.time=new; s.routine.envir_(s.postln)
 		}
 	},
 	// var
@@ -78,12 +84,13 @@ Window.closeAll; 0.1.wait;
 	a.postln;
 	a.ini.value;
 	//a.ini2.value;
-	a.time_(10);
- a.win.parent .alwaysOnTop_(true);
+	a.time_(4);
+	a.win.parent.alwaysOnTop_(true);
+	NumberBox(a.win.parent, Rect(40, 0, 20, 20 ))
 }) 
 
 a.time
-a.newTime(50)
+a.newTime(4)
 a.routine.envir_((io:8)
 )
 
