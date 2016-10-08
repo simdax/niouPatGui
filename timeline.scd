@@ -1,31 +1,41 @@
-
 (
 
 #a,b,c,z,w=nil!3;
 Window.closeAll;
 s.boot;
 w=FlowView();
-a="pattGui.scd".loadRelative;
-
+e=View(w, 200@60).background_(Color.rand);
+h=View(w, 260@120).background_(Color.rand);
 b=TabbedView2(w);
 w.parent.alwaysOnTop_(true);
 
-5.do{arg x;
+c="timeline3.scd".loadRelative[0].value(e);
+
+a="pattGui.scd".loadRelative;
+
+4.do{arg x;
 	var i; i=b.add(x);
 	z.postln;
 	z=z.add(a[0].deepCopy);
  	z[x].init(i);
 };
-c="timeline3.scd".loadRelative[0];
+
+h.addFlowLayout;
+y="flopDict.scd".loadRelative[0];
+j=y.value(z).asArray.asDict.as(Event);
+EnvirGui(j,6,h);
+
+
+f={'jkl'.postln};
+
 ~pattern=EventPatternProxy
 (
-(
-(z.collect(_.patPro)
-+++(z.size.collect({|x| Plazy{x.postln} })))
-.flat
+(z.collect(_.patPro).collect(Pfset({},_,f))
 .pseq
 )
 );
+
+
 
 c.time_(
 	[\params,\time].inject(z, {arg a,b; a.collect(_.perform(b)) }).sum
