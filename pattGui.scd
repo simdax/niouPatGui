@@ -17,7 +17,7 @@ pat: {arg s;
 			\dur,    Pseed(Pfunc{s.params.seedDur},Prand([1,2,3,4],inf)),
 			\octave, Pfunc{s.params.octave},
 			\stretch, Pfunc{s.params.stretch.reciprocal},
-		).trace.finDur(Pfunc{s.params.time}.asStream)
+		).finDur(Pfunc{s.params.time}.asStream)
 	);
 }, init:{arg s, pa;
 	var gui;

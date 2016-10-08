@@ -1,7 +1,9 @@
 (
-var w, z, f;
-var a="timeline2.scd".loadRelative[0];
-w=Window("io", 200@60).front;
+{
+	arg w=Window("io", 200@60).front;
+	var  z, f;
+	var a="timeline2.scd".loadRelative[0];
+
 a.setEsp; // init equivalent
 a.guigui(w);
 
@@ -19,7 +21,7 @@ TaskProxy({
 		};
 		0.2.wait}
 }).play;
-
-a
+	a
+}
 
 )
