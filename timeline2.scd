@@ -1,5 +1,5 @@
 (
-~timeline=(
+var timeline=(
 	// time manip
 	recommence:{ arg s;
 		s.offset=0;
@@ -18,20 +18,27 @@
 			pourcentage=s.time/new; pourcentage;
 			//action
 			s.offset=s.win.value=(s.win.value*pourcentage);
-		}
+		};
+		s.changed(\time);
 	},
 	// var
 	time:1, offset:0, fps:1/25,
 	//routine
 	paused:false, playing:false,
  	pattern:Pbind(\octave, 5, \degree,Pseries(0,1), \dur, 0.5),
-	esp:EventPatternProxy(Plazy{arg s;PFF(s.offset,s.pattern)}).quant_(0),
+	setPattern:{arg s, niou ;  
+		s.pattern=niou;
+		s.setEsp
+	},
+	setEsp:{arg s; s.esp.source=Plazy{arg s;PFF(s.offset*s.time,s.pattern)}},
+	esp:EventPatternProxy().quant_(0),
 	routine:TaskProxy({ arg s;
 		var b=0;
 		while{b<1}{
 			var time={(s.time/s.fps).reciprocal}.value;
 			{
 				b=s.win.value;
+				s.offset=b+time;
 				s.win.value_(b+time);
 			}.defer;
 			s.fps.wait;
@@ -71,29 +78,25 @@
 				//	s.keyDownAction.value
 			}
 		};
-	};
-
-)
-)
-( 
-s.waitForBoot{
-	Window.closeAll;
-	0.1.wait;
-	a=nil;
+	});
 	w=Window("io", 200@60).front;
-	a=~timeline;
+	a=timeline; a.setEsp;
 	a.guigui(w.postln);
 	//a.ini2.value;
 	a.time_(4);
 	a.win.parent.alwaysOnTop_(true);
-	NumberBox(a.win.parent, Rect(0, 40, 100, 20 ));
+	z=NumberBox(a.win.parent, Rect(0, 40, 100, 20 ))
+	.action_{arg s;var c=s.value;
+			a.newTime(1.max(c))
+	};
 	f=StaticText(a.win.parent, Rect(100, 40, 100, 20 ));
 	TaskProxy({loop{
-		defer{var t=a.win.value*a.time;
-			f.string_(t)} ;0.2.wait}
+		defer{
+			var tt=a.time;
+			var t=a.win.value*a.time;
+			f.string_(t); z.value_(tt)
+		};
+		0.2.wait}
 	}).play;
-}) 
+) 
 
-
-
-a.esp.stop.play
