@@ -1,6 +1,6 @@
 (
 
-#a,b,c,z,w=nil!3;
+#a,b,c,z,w,m=nil!3;
 Window.closeAll;
 s.boot;
 w=FlowView();
@@ -15,6 +15,7 @@ a="pattGui.scd".loadRelative;
 
 4.do{arg x;
 	var i; i=b.add(x);
+	m=m.add(i);
 	z.postln;
 	z=z.add(a[0].deepCopy);
  	z[x].init(i);
@@ -25,12 +26,16 @@ y="flopDict.scd".loadRelative[0];
 j=y.value(z).asArray.asDict.as(Event);
 EnvirGui(j,6,h);
 
-
-f={'jkl'.postln};
+f={arg  i;
+	{i.postln;
+	defer{m[i].focus}}
+};
 
 ~pattern=EventPatternProxy
 (
-(z.collect(_.patPro).collect(Pfset({},_,f))
+(z.collect(_.patPro).collect({|item, index|
+Pfset(f.value(index),item)
+})
 .pseq
 )
 );
