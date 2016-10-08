@@ -15,37 +15,24 @@
 	pattern:Pbind(\degree,Pseries()),
 	fps:1/25,
 	toggle:{ arg s, continue=false;
+		var pause={	arg r;
+			r.isPaused.if{r.resume};
+			r.pause
+		};
 		var toggle={arg rout; if((rout.isPlaying xor: continue.not))
 			{"restart".postln; rout.stop.play} //restart
-			{"stop".postln; rout.stop} // stop
+			{"pause".postln; pause.(rout)} // stop
 		};
-		[s.tmpPattern,s.routine,s.esp].do{arg x; toggle.(x)}
+		[s.tmpPattern,s.routine].do{arg x; toggle.(x)}
 	},
-	ini2:{arg s;
-		s.esp=EventPatternProxy().quant_(0);
-		s.tmpPattern=TaskProxy({
-			var pat=PFF(s.offset,s.pattern);
-			s.esp.source_(pat);
-			loop{
-				var bob=FlowVar();
-				s.cl !? {s.cl.stop}; s.cl=TempoClock();
-				s.cl.sched((s.time-s.offset),
-					{
-						"yyyiah".postln;
-						s.esp.stop;
-						bob.value_(\youpi);
-					});				
-				bob.value;
-				"on revient !".postln;
-				s.offset_(0);
-				defer{
-					s.win.value_(0);
-					s.routine.reset.play;
-				};
-			}
+	pause:{ arg s;
+		var routines=[s.routine,s.tmpPattern];
+		routines.do{arg r;
+			r.isPaused.if{r.resume};
+			r.pause
 		}
-		).quant_(0);
-		s.routine= TaskProxy({
+	},
+	routine:TaskProxy({ arg s;
 			var b=0;
 			var time={(s.time/s.fps).reciprocal}.value;
 			while{b<1}{ 
@@ -55,15 +42,30 @@
 				}.defer;
 				s.fps.wait;
 			};
-		}).quant_(0)
-	},
+	}).quant_(0),
+	//	setEsp:{arg s; s.espPlazy{arg s;PFF(s.offset,s.pattern)}}
+	esp:EventPatternProxy(Plazy{arg s;PFF(s.offset,s.pattern)}).quant_(0),
+	paused:false, playing:false,
+	routines:{arg s; [s.routine, s.esp]},
 	ini:{ arg s, parent=Window("timeline", 200@40).front;
+			s.routine.envir_(s); s.esp.envir_(s);
 		s.win=Slider(parent, 200@30)
-		.onClose_{s.routine.stop; s.tmpPattern.stop}
+		.onClose_{s.routine.clear; s.esp.clear}
 		// stop always
 		.keyDownAction_{
 			arg self, c;
-			switch(c, $ , {s.toggle})
+			switch(c, $ , { "01234".scramble.postln;
+				if(s.playing){
+					"pause".postln;
+					s.routines.do(_.pause);
+					s.playing=false; s.paused=true
+				}
+				{
+					if( s.paused)
+					{"resume".postln; s.routines.do(_.resume); s.playing=true; }
+					{"play".postln;s.routines.do(_.play); s.playing=true};
+				}
+			})
 		}
 		//retriggers
 		.mouseUpAction_{
@@ -71,24 +73,38 @@
 			if(s.time==inf){} // do nothing
 			{
 				s[\offset]=self.value*s.time;
-				s[\offset].postln;
-				s.toggle(true)
+				if(paused.not){s.esp.stop.play};
+				s.keyDownAction.value
 			}
 		};
 	};
+
 )
 )
 
-(
-s.boot;
-Window.closeAll;
-a=~timeline; a.ini.ini2; a.time_(2);
+Pdef(\c, Pbind()).play.pause.resume
+
+a
+
+( 
+s.waitForBoot{
+Window.closeAll; 0.1.wait;
+	a=nil;
+	a=~timeline.copy;
+	a.postln;
+	a.ini.value;
+	//a.ini2.value;
+	a.time_(4);
 a.win.parent.alwaysOnTop_(true);
+})
 
-)
-a.routine.play
-a.esp.stop
-a.tmpPattern.toggle
+a.routines.do(_.resume)
+a.esp.source
+a.esp.envir_((a:9))
+a.esp.play
+a.esp.pause
+a.esp.resume
+a.routines.do(_.resume)
 
 a.newTime(20)c
 
