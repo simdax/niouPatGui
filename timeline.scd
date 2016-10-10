@@ -1,8 +1,7 @@
 (
 
 #a,b,c,z,w,m=nil!3;
-Window.closeAll;
-s.boot;
+
 w=FlowView();
 e=View(w, 200@60).background_(Color.rand);
 h=View(w, 260@120).background_(Color.rand);
@@ -26,11 +25,12 @@ y="flopDict.scd".loadRelative[0];
 j=y.value(z).asArray.asDict.as(Event);
 EnvirGui(j,6,h);
 
-f={arg  i;
-	{i.postln;
-	defer{m[i].focus}}
-};
+"setDict.scd".loadRelative[0].value(m,j);
 
+f={arg  i;
+	{defer{m[i].focus}
+	}
+};
 ~pattern=EventPatternProxy
 (
 (z.collect(_.patPro).collect({|item, index|

@@ -13,7 +13,7 @@ pat: {arg s;
 			\instrument, Pfunc{s.instrument},
 			\amp, Pfunc{s.params.amp},
 			\octave, Pfunc{s.params.octave},
-			\degree, Pseed(Pfunc{s.params.seedDeg},Prand([0,5],inf)),
+			\degree, Pseed(Pfunc{s.params.seedDeg},Prand((0..5),inf)),
 			\dur,    Pseed(Pfunc{s.params.seedDur},Prand([1,2,3,4],inf)),
 			\octave, Pfunc{s.params.octave},
 			\stretch, Pfunc{s.params.stretch.reciprocal},
