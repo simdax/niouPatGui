@@ -1,5 +1,6 @@
 (
 
+// TODO = tabbedV all + adapt nb
 {
 	arg a=(a:[0,2,1,3], b:[0,3,2], c:4), // main dic (for test)
 	parent=FlowView();
@@ -49,6 +50,8 @@
 			}
 		}
 	};
+
+	(dicts:x, complet:t)
 }//.value("pattGui.scd".loadRelative[0].params)
 
 

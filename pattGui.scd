@@ -8,7 +8,7 @@ specs:(amp:\amp, octave:[2, 8,\lin,1],
 ),
 params:( amp: 0.3, octave:5, seedDeg:100.rand, seedDur:100.rand, stretch:4, time:4),
 pat: {arg s;
-	s.patPro=EventPatternProxy(
+	s.patProxy=EventPatternProxy(
 		Pbind(
 			\instrument, Pfunc{s.instrument},
 			\amp, Pfunc{s.params.amp},
@@ -19,16 +19,18 @@ pat: {arg s;
 			\stretch, Pfunc{s.params.stretch.reciprocal},
 		).finDur(Pfunc{s.params.time}.asStream)
 	);
+	s.patProxy;
 }, init:{arg s, pa;
-	var gui;
-	try{pa.decorator}!?{pa.addFlowLayout};
-	gui=EnvirGui(s.params,6,pa);
+	// var gui;
+	// try{pa.decorator}!?{pa.addFlowLayout};
+	// gui=EnvirGui(s.params,6,pa);
+	
 	//specs
-	s.specs.keysValuesDo{arg k,v;
-		k.asArray.do{ arg y;
-			gui.putSpec(y, v)
-		}
-	}
+	// s.specs.keysValuesDo{arg k,v;
+	// 	k.asArray.do{ arg y;
+	// 		gui.putSpec(y, v)
+	// 	}
+	// }
 }
 )
 
