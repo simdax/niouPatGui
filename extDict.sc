@@ -7,10 +7,11 @@
 		^vals.collect( k+++_ ).collect(_.flatten).collect(_.as(this.species))
 	}
 	complete{
-		var size=this.values.collect(_.size).maxItem;
+		var size=this.values.collect(_.size).replace(0,1).maxItem;
 		^this.collect({|x| size.collect(x.asArray @@ _) });
 	}
 }
+
 
 // a.species
 // a=(b:[3,5], c:4, joe:4898);

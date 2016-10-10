@@ -21,10 +21,9 @@ pat: {arg s;
 	);
 }, init:{arg s, pa;
 	var gui;
-	try{pa.decorator}??{pa.addFlowLayout};
-	s.postln;
-	s.pat; s.patPro.postln;
+	try{pa.decorator}!?{pa.addFlowLayout};
 	gui=EnvirGui(s.params,6,pa);
+	//specs
 	s.specs.keysValuesDo{arg k,v;
 		k.asArray.do{ arg y;
 			gui.putSpec(y, v)
