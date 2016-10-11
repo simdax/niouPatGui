@@ -2,7 +2,7 @@
 
 // TODO = tabbedV all + adapt nb
 {
-arg a=(a:[0,0,0], b:[0,0], c:4), // main dic (for test)
+arg a=(degree:[0,0,0], dur:[1,1], stretch:4), // main dic (for test)
 parent=FlowView();
 var b, // incremental add
 t, g, // completed dict + gui
@@ -58,11 +58,10 @@ z.do { |envG,i|
 	}
 };
 
-c=(dicts:floppedDict, complet:t);
+(dicts:floppedDict, complet:t);
 //d=floppedDict; d.collect(_.gui(size, nil));
-}.value//("pattGui.scd".loadRelative[0].params)
+}//.value//("pattGui.scd".loadRelative[0].params)
 
 
 )
 
-c

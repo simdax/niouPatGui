@@ -27,14 +27,8 @@
 + Dictionary {
 	/*
 	*/
-	gui { |...args|
-		var  numItems, parent, bounds, preset;
-		if(args[0].isNumber,{
-			# numItems, parent, bounds, preset = args;
-			numItems = numItems ?? { max(12, this.size) };
-			^EnvirGui(this, numItems, parent, bounds, options: preset);
-		},{
-			^super.gui(*args)
-		})
+	gui { arg  numItems, parent, bounds, options;
+		var n = numItems ?? { max(12, this.size) } ;
+		^EnvirGui(this, n, parent, bounds, options:options);
 	}
 }

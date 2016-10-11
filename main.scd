@@ -1,4 +1,3 @@
-
 (
 
 Window.closeAll;
@@ -8,22 +7,21 @@ a="pattGui.scd".loadRelative[0];
 b="flopDict.scd".loadRelative[0];
 
 // c=a.copy;
-z=b.(a.copy.params); // moui...
+z=b.(); // moui...
 
-y=z.dicts.collect(a.copy.params_(_));
 
-f
+
 {arg i;
 	{defer{m[i].focus}
 	}
 };
 
-Pdef(\c, Pbind(*z.complet.collect(_.pseq).asPairs).pat.repeat);
+c=z.dicts.collect({|x| a.copy.proto_(x) });
+
+Pdef(\c, Pseq(c.collect(_.pat)).repeat);
 
 PdefAllGui()
 )
-
-z
 
 
 
