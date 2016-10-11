@@ -1,8 +1,8 @@
 (
 
 // TODO = tabbedV all + adapt nb
-//{
-var a=(a:[0,2,1,3], b:[0,3,2], c:4), // main dic (for test)
+{
+arg a=(a:[0,0,0], b:[0,0], c:4), // main dic (for test)
 parent=FlowView();
 var b, // incremental add
 t, g, // completed dict + gui
@@ -17,11 +17,18 @@ b=a.copy.collect(0);
 b.gui(size,parent).paramViews.do { |x|
 	//	x.currview.sliderView.mouseUpAction_{x.valueAction_(0.0)};
 	x.action=r{
-		var initVal=t[x.label];
+		//		var initVal=t[x.label];
+		var incr=0;
 		loop
 		{
 			var pres=(x.value.asStringPrec(2).asFloat);
-			t[x.label]= (initVal+pres);
+			var val=pres-incr;
+			t[x.label]= t[x.label]+val//(initVal+pres)
+			;
+			floppedDict.do { |y,i|
+				(y.[x.label] = y.[x.label]+(val));
+			};
+			incr=pres;
 			0.yield;
 		}
 	}.asStream
@@ -53,7 +60,7 @@ z.do { |envG,i|
 
 c=(dicts:floppedDict, complet:t);
 //d=floppedDict; d.collect(_.gui(size, nil));
-//}//.value("pattGui.scd".loadRelative[0].params)
+}.value//("pattGui.scd".loadRelative[0].params)
 
 
 )
