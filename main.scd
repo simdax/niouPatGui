@@ -33,6 +33,5 @@ c=z.dicts.collect({|x|
 PdefAllGui()
 )
 
-d.win.keyDownAction.postcs
 
 

@@ -1,21 +1,33 @@
 (
-
+"flopDict.scd".loadRelative;
+~g={arg s; var n=FlowView();
+	var gui=s.gui(8, n, options:\proto);
+	var pv=gui.viewForParam(\seed);		
+	// pv !? {pv.action=pv.action.addFunc
+	// 	({"recom".postln;s.proxy.source_(s.pat)})};
+	s.proto??{s.proto=()};
+	s.proto.putPairs([\gui, gui, \win,n,\proxy, EPP(s.papat.trace)]);
+	Button(n).string_("go").action_{s.proxy.toggle};
+	Button(n).string_("source").action_{s.proxy.source_(s.papat.trace)};
+	Button(n).string_("add").action_{ arg sss;
+		TextField(nil,sss.absoluteBounds)
+		.front.keyDownAction_{arg ss,c,mod,u; 
+			u.switch(13,{s.put(ss.string.asSymbol, 2);
+				ss.remove})
+		}
+	}
+};
 ~specs=(
 	seed:[0,1000, nil, 1],
 	seedDur:[0,1000, nil, 1],
 	setDur:[1, 4, nil, 1], setDeg:[-3,3,nil,1],
 );
 ~filtre=(basse:Pchords);
-~base=(fin:`2);
+~base=(fin:`inf);
 ~p=(
-	pat:{arg s; Pbind(\degree, Plazy{s}).trace},
-	g:{arg s; var n=FlowView();
-		s.proxy=EPP(s.pat); var action;
-		s.gui(1, n);
-		.viewForParam(\seed).action=addAction_()
-		Button(n).action_{s.proxy.toggle}
-	}),
-	fin:`2,
+	spl:~envir,
+	g:~g,
+	fin:`inf,
 	pat:{arg s; s.use{
 		(~fin.value==inf).if{Pbind().fin(1).repeat}
 		{
@@ -67,17 +79,4 @@
 )
 
 
-(
-
-)
-(seedDeg:2).specs_(~specs).gui(4)
-
-(n=FlowView();
-a=(seed:9, set:[0,4], specs:(set:[0,4,nil,1])).parent_(~p).proto_(~mel);
-b=(dur:[1, 1, 2]).parent_(~p);
-a.gui(3,n);
-b.gui(3,n);
-e=EventPatternProxy((Pn(a)<>Pn(b)).trace);
-Button(n).action_{ e.toggle}
-)
 

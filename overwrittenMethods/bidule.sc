@@ -19,7 +19,7 @@
 			i
 		};
 		//// FEINTE LIKE ITS NOT USED
-		useRanger=fields.postln;
+		useRanger=fields;
 	}
 	showFields { |num = 0|
 		paramViews.do { |pv, i|
@@ -27,6 +27,20 @@
 			pv.visible_(isInUse);
 		};
 		try{this.hideFields(*useRanger)};
+	}
+
+}
+
++ ParamView {
+		valueType { |newval|
+		^case
+		{ newval.isNumber } { 0 }
+		// { newval.isKindOf(Array) and:
+		// 	{ newval.size == 2 and:
+		// 		{ newval.every(_.isNumber) }
+		// 	}
+		// } { 1 }
+		{ 2 }
 	}
 
 }

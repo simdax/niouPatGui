@@ -10,6 +10,9 @@
 		var size=this.values.collect(_.size).replace(0,1).maxItem;
 		^this.collect({|x| size.collect(x.asArray @@ _) });
 	}
+	completeChange{
+		this.putAll(this.complete)
+	}
 }
 
 

@@ -2,15 +2,16 @@
 
 // TODO = tabbedV all + adapt nb
 ~envir={
-	arg a=(degree:[0,0,0], dur:[1,1], stretch:4), // main dic (for test)
-	parent=FlowView();
+	arg a=(degree:[0,0,0], dur:[1,1], stretch:4);
+	var parent=a.win??{FlowView()};
 	var b, // incremental add
 	t, g, // completed dict + gui
 	floppedDict, z; // flopped dict + gui
 
 	var size=a.size;
 
-	//	Window.closeAll;
+	var f;
+	var tabbedV;
 
 	// retouches GUI
 	b=a.copy.collect(0);
@@ -26,7 +27,12 @@
 				t[x.label]= t[x.label]+val//(initVal+pres)
 				;
 				floppedDict.do { |y,i|
-					(y.[x.label] = y.[x.label]+(val));
+					// if(y.[x.label].class==Ref){
+					// 	(y.[x.label].value = y.[x.label]+(val));
+					// }
+					//{
+						(y.[x.label] = y.[x.label]+(val))
+						//};
 				};
 				incr=pres;
 				0.yield;
@@ -35,32 +41,39 @@
 	};
 
 	//main
-	t=a.complete; g=t.gui(size, parent);
-	g.paramViews.do(_.action={arg self;
+	t=a;
+	t.completeChange; g=a[\gui];//.gui(size, parent);
+	g.paramViews.do { |x| x.action=x.action.addFunc{arg self;
 		var label=self.label; var value=self.value;
-		floppedDict.do { |x,i|
-			if(value[i]!=x.at(label))
-			{x.perform((label++"_").asSymbol,value[i])}
-		};
-	});
+		var tmp;
+		t.completeChange; tmp=t.flop;
+		f.value;
+	}};
 
 	parent.decorator.nextLine;
 	
 	// flopped
-	floppedDict=a.flop;
-	floppedDict.postln;
-	//d=floppedDict;
-	z=floppedDict.collect(_.gui(size, parent));
-	z.do { |envG,i|
-		envG.paramViews.do { |param|
-			param.action=param.action.addFunc({
-				t[param.label]=
-				t[param.label].copy
-				.put(i,param.value.asStringPrec(2).asFloat)
-			})
-		}
+	
+	tabbedV=TabbedView2(parent);
+	f=
+	{
+		tabbedV.clearAll;
+		floppedDict=a.flop;
+		z=floppedDict.collect({|x,i|
+			var t=tabbedV.add(i); t.addFlowLayout;
+			x.gui(size, t); 
+		}); 
+		z.do { |envG,i|
+			envG.paramViews.do { |param|
+				param.action=param.action.addFunc({
+					t[param.label]=
+					t[param.label].copy
+					.put(i,param.value.asStringPrec(2).asFloat)
+				})
+			}
+		};
 	};
-
+	f.value;
 	(dicts:floppedDict, complet:t, parent:parent);
 	//d=floppedDict; d.collect(_.gui(size, nil));
 }//("pattGui.scd".loadRelative[0].params)

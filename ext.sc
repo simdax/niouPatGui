@@ -1,6 +1,6 @@
 + PatternProxy{
 	toggle{
-		if(this.isPlaying){this.stop}{this.play}
+		if(this.isActive){"stop".postln; this.stop}{"play".postln ;this.play}
 	}
 }
 + TaskProxy{
