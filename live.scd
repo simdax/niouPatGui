@@ -4,15 +4,34 @@
 	seedDur:[0,1000, nil, 1],
 	setDur:[1, 4, nil, 1], setDeg:[-3,3,nil,1],
 );
+~filtre=(basse:Pchords);
+~base=(fin:`2);
 ~p=(
-	pat:Pbind().fin(1),
-	papat:{arg s;
+	fin:`2,
+	pat:{arg s; s.use{
+		(~fin.value==inf).if{Pbind().fin(1).repeat}
+		{
+			~fin.value.isFloat.if
+			{Pbind().finDur(~fin)}
+			{Pbind().fin(~fin)}
+		}
+	}},
+	list:[], listDo:{arg s; s.use{ 
+		~list.keysValuesDo{arg k,v; [k,v.value] }
+	}},
+	papat:{arg s; s.use{
 		var keys=s.keys.as(Array);
-		var io=(keys+++(keys.collect({|k| s[k].class.switch(
-			Array, {s[k].pseq}, {Pfunc{s[k]}}
-		) }))).flatten;
+		var io=(keys+++(keys.collect({|k|
+			k.switch(*s.listDo.asPairs ++
+				{s[k].class.switch(
+					Array, {s[k].pseq},
+					Ref, { Pfunc{s[k].value}},
+					{Pfunc{s[k]}}
+				)}
+			);
+		}))).postln.flatten.postln;
 		(s.pat <> Pbind(*io))
-	},
+	}},
 	embedInStream:{arg s, in;  s.papat.embedInStream(in)},
 	specs:~specs
 );
@@ -21,11 +40,14 @@
 		 h=s[\w]?((1!s[\set].size).normalizeSum);
 		Pseed(s[\seed], Pwrand(s[\set],h,inf))
 	}).proto_((set:[1,2],seed:0)),
-	event:(phrase:{arg s;
-		var reste=s.time*(s.fin.reciprocal);
-		var phrase=(s.pat?Pbind()).asStream;
-		Pseq([ phrase, Pbind(\dur, reste)<>phrase.next])
-	})
+	event:(
+		phrase:{arg s;
+			var reste=s.time*(s.fin.reciprocal);
+			var phrase=(s.pat?Pbind()).asStream;
+			Pseq([ phrase, Pbind(\dur, reste)<>phrase.next])
+		},
+		harmo:Pbind(\degree,Pfunc{~harmo[\basse]})
+	)
 );
 )
 
