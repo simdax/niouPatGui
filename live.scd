@@ -1,4 +1,16 @@
 (
+
+Event.addEventType(\appo,{ arg self;
+	var dur;
+	~degree=(~degree+~mtranspose).degreeToKey(~scale?[0,2,4],7);
+	~scale=~mode ? [0,2,4,5,7,9,11];
+	~mtranspose=Array.rand(~appo?0, -1,1);
+	dur=(~dur!(1+~appo)).normalizeSum * ~dur;
+	~type=\note;
+	Pbind(\dur, dur.pseq).play(protoEvent:currentEnvironment);
+	//	~type=\note; currentEnvironment.play
+});
+
 "flopDict.scd".loadRelative;
 ~g={arg s; var n=FlowView();
 	var gui=s.gui(8, n, options:\proto);
@@ -15,9 +27,13 @@
 			u.switch(13,{s.put(ss.string.asSymbol, 2);
 				ss.remove})
 		}
-	}
+	};
+	Button(n).string_("remove").action_{ arg self;
+		FlowView(nil,self.absoluteBounds.extent_(20@20))
+	};
 };
 ~specs=(
+	degree:[-35, 35, nil, 1],
 	seed:[0,1000, nil, 1],
 	seedDur:[0,1000, nil, 1],
 	setDur:[1, 4, nil, 1], setDeg:[-3,3,nil,1],
@@ -28,7 +44,7 @@
 	spl:~envir,
 	g:~g,
 	fin:`inf,
-	pat:{arg s; s.use{
+	postPat:{arg s; s.use{
 		(~fin.value==inf).if{Pbind().fin(1).repeat}
 		{
 			~fin.value.isFloat.if
@@ -51,7 +67,7 @@
 				)}
 			);
 		}))).flatten;
-		(s.pat <> Pbind(*io))
+		(s.postPat <> Pbind(*io))
 	}},
 	//	play:{Pn(p{arg in;Pbind().embedInStream(in)}).trace.play},
 	embedInStream:{arg s, in;  s.papat.embedInStream(in)},
@@ -75,7 +91,12 @@
 			Pbind(\degree, )
 		}
 	)
-);
+).parent_(~p);
+
+//define type
+~patGui={arg ...args;
+	args.as(Event).parent_(~p);
+}
 )
 
 

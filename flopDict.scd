@@ -12,27 +12,34 @@
 
 	var f;
 	var tabbedV;
-
+	var refresh={
+		t.completeChange; floppedDict=nil;
+		f.value
+	};
+	
+	Button(parent).action_{
+		t.degree=t.degree.add(t.degree.last);
+		refresh.value;
+		//t[\gui].refresh;
+	};
+	Button(parent).action_{
+		tabbedV.clearAll
+	};
+	parent.decorator.nextLine;
 	// retouches GUI
 	b=a.copy.collect(0);
-	b.gui(size,parent).paramViews.do { |x|
-		//	x.currview.sliderView.mouseUpAction_{x.valueAction_(0.0)};
+	b.gui(size,parent).paramViews.do { |x, ii|
 		x.action=r{
-			//		var initVal=t[x.label];
 			var incr=0;
 			loop
 			{
-				var pres=(x.value.asStringPrec(2).asFloat);
+				var pres=(x.value.value.asStringPrec(2).asFloat);
 				var val=pres-incr;
-				t[x.label]= t[x.label]+val//(initVal+pres)
-				;
-				floppedDict.do { |y,i|
-					// if(y.[x.label].class==Ref){
-					// 	(y.[x.label].value = y.[x.label]+(val));
-					// }
-					//{
-						(y.[x.label] = y.[x.label]+(val))
-						//};
+				[t,floppedDict].flat.do { |y,i|
+					//if(true)
+					// if(y[x.label][i].class.postln==Ref)
+					// {(i==0).if{y[x.label][ii].value=1}}
+					(y[x.label] = y[x.label]+(val))
 				};
 				incr=pres;
 				0.yield;
@@ -44,10 +51,7 @@
 	t=a;
 	t.completeChange; g=a[\gui];//.gui(size, parent);
 	g.paramViews.do { |x| x.action=x.action.addFunc{arg self;
-		var label=self.label; var value=self.value;
-		var tmp;
-		t.completeChange; tmp=t.flop;
-		f.value;
+		refresh.value;
 	}};
 
 	parent.decorator.nextLine;
@@ -58,7 +62,8 @@
 	f=
 	{
 		tabbedV.clearAll;
-		floppedDict=a.flop;
+		tabbedV.tabViews.postln;
+		floppedDict=t.flop;
 		z=floppedDict.collect({|x,i|
 			var t=tabbedV.add(i); t.addFlowLayout;
 			x.gui(size, t); 
