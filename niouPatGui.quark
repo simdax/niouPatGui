@@ -1,0 +1,10 @@
+(dependencies:[
+"www.github.com/simdax/app",
+"www.github.com/simdax/eventTypes",
+"www.github.com/simdax/patternsSC",
+"www.github.com/simdax/PFF",
+"www.github.com/simdax/protoGui",
+"www.github.com/simdax/SynthDefPool",
+"www.github.com/simdax/timeline",	
+"TabbedView2",
+])
