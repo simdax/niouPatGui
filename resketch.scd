@@ -75,8 +75,8 @@ z.timeline.pattern_(Pn(d));
 
 )
 
-(Pn(d)<>Pbind(\instrument, \acid_oto309, \amp, 2)).trace.play
-(Pn(d) <> (instrument: \acid_oto309,      amp: 0.3)).trace.play
+// (Pn(d)<>Pbind(\instrument, \acid_oto309, \amp, 2)).trace.play
+// (Pn(d) <> (instrument: \acid_oto309,      amp: 0.3)).trace.play
 // SDP.gui
 
 // (Pbind().finDur(4).pseq <> (io:7)).trace.play
