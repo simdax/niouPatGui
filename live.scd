@@ -14,9 +14,6 @@ Event.addEventType(\appo,{ arg self;
 "flopDict.scd".loadRelative;
 ~g={arg s; var n=FlowView();
 	var gui=s.gui(8, n, options:\proto);
-	var pv=gui.viewForParam(\seed);		
-	// pv !? {pv.action=pv.action.addFunc
-	// 	({"recom".postln;s.proxy.source_(s.pat)})};
 	s.proto??{s.proto=()};
 	s.proto.putPairs([\gui, gui, \win,n,\proxy, EPP(s.papat.trace)]);
 	Button(n).string_("go").action_{s.proxy.toggle};
@@ -70,7 +67,7 @@ Event.addEventType(\appo,{ arg self;
 		(s.postPat <> Pbind(*io))
 	}},
 	//	play:{Pn(p{arg in;Pbind().embedInStream(in)}).trace.play},
-	embedInStream:{arg s, in;  s.papat.embedInStream(in)},
+	embedInStream:{arg s, in;  s.papat.collect{|x|s.value=x}.embedInStream(in)},
 	specs:~specs
 );
 ~pats=(
@@ -83,7 +80,7 @@ Event.addEventType(\appo,{ arg self;
 			var reste=s.time*(s.fin.reciprocal);
 			var phrase=(s.pat?Pbind()).asStream;
 			Pseq([ phrase, Pbind(\dur, reste)<>phrase.next])
-		},
+ 		},
 		harmo:{arg s;
 			Pbind(\degree,Pfunc{~harmo[\basse]})
 		},

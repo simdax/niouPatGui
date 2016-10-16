@@ -35,11 +35,11 @@
 		valueType { |newval|
 		^case
 		{ newval.isNumber } { 0 }
-		// { newval.isKindOf(Array) and:
-		// 	{ newval.size == 2 and:
-		// 		{ newval.every(_.isNumber) }
-		// 	}
-		// } { 1 }
+		{ newval.isKindOf(Array) and:
+			{ newval.size == 2 and:
+				{ newval.every(_.isNumber) }
+			}
+		} { 1 }
 		{ 2 }
 	}
 
