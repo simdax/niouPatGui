@@ -1,4 +1,4 @@
-//dont know why, its not in standard ...
+//dont know why, its not in standard 3.7.2...
 
 MyEnvirGui : JITGui {
 
@@ -344,7 +344,7 @@ MyEnvirGui : JITGui {
 	initDeux{
 		try{
 			specs=specs ++ object[\specs].collect(_.asSpec);
-			this.hideFields(\specs)
+			//			this.hideFields(\specs)
 		}
 	}
 	
@@ -369,16 +369,12 @@ MyEnvirGui : JITGui {
 
 }
 
-+ ParamView {
-		valueType { |newval|
-		^case
-		{ newval.isNumber } { 0 }
-		{ newval.isKindOf(Array) and:
-			{ newval.size == 2 and:
-				{ newval.every(_.isNumber) }
-			}
-		} { 1 }
-		{ 2 }
++ MyEnvirGui{
+	addAction{arg label,func;
+		var v=this.viewForParam(label);
+		var a=v.action;
+		v.action=v.action.addFunc(func);
+		^v
 	}
-
 }
+

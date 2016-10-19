@@ -1,4 +1,4 @@
-ParamView {
+MyParamView {
 	var <value, <label, <>action, <spec;
 	var <zone, <zones, <slider, <ranger, <textview;
 	var <ezviews, <currview, <viewType;
@@ -44,7 +44,10 @@ ParamView {
 
 		ezviews = [slider, ranger, textview];
 		ezviews.do { |ez|
-			ez.action_({ |ez| this.valueAction_(ez.value)} );
+			// type check
+			ez.action_({ |ez|
+				this.valueAction_(ez.value)
+			});
 		};
 		if (initVal.notNil) { this.value(initVal) };
 		if (initAction) { this.doAction };
@@ -64,11 +67,7 @@ ParamView {
 	valueType { |newval|
 		^case
 		{ newval.isNumber } { 0 }
-		{ newval.isKindOf(Array) and:
-			{ newval.size == 2 and:
-				{ newval.every(_.isNumber) }
-			}
-		} { 1 }
+		{ newval.isKindOf(Range) } { 1 }
 		{ 2 }
 	}
 
@@ -81,10 +80,7 @@ ParamView {
 	}
 
 	doAction { action.value(this) }
-	valueAction_ { |val|
-		if()
-		this.value_(val).doAction
-	}
+	valueAction_ { |val| this.value_(val).doAction }
 
 	spec_ { |newspec|
 		spec = newspec.asSpec;

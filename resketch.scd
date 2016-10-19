@@ -9,56 +9,65 @@ var a, //pattern def
 t,// main view
 b,c, // mini Dicts
 d, // controller for mini Dicts
+g, //function for time control
 z // result
 ;
 
-a=(
-	//vals
-	seed:0, set:[1,4], reso:1,
-	// methods
+a=(seed:0, set:[1,4], reso:1).parent_(
+(	// methods
 	pat:{arg s; s.use{Pseed(~seed,Pwhite(*~set)).round(~reso)}},
 	embedInStream:{arg s,in; s.pat.embedInStream(in)},
 	asStream:{arg s; s.parent.put(\proxy,PatternProxy(s.pat));
 		s.proxy},
-	gui:{arg s, p, b, nIt=s.size; var gui;
-		gui=EnvirGui(s, nIt, p,b);
+	gui:{arg s, p, b, nIt=s.size+1, options; var gui;
+		gui=MyEnvirGui(s, nIt, p,b,options:options);
 		s.keys.do { |k| 
 			gui.viewForParam(k).action=
 			gui.viewForParam(k).action.addFunc{
 				s.proxy.source_(s.pat)
 			}
 		};
+		gui
 	},
-	specs:(seed:[0,120,nil,1],set:[0.1,4], reso:[0.25,1,nil,0.25])
-);
+	specs:(seed:[0,120,nil,1],set:[0.1,4,nil], reso:[0.25,1,nil,0.25])));
+
+
+
 t=FlowView();
-#b,c=["dur","degree"].collect((name:_)).do(_.putAll((seed:0, set:[1,4], reso:1))).do(_.parent_(a.copy));
-[c,b].do(_.gui(t));
+#b,c={a.copy}!2;
+[c,b].do{arg x, i; x.postln.gui(t,options:\name).name_(["dur","degree"][i])
+};
+
 
 
 ///// LES RETOUCHES
 
-Spec.add(\seed, [0, 4,nil,1]);
+Spec.add(\seedio, [0, 4,nil,1]);
 
 d=(
-	times: [4,4],
 	init:{arg s, p,b;
-		s.dicts=(seedR:0, seedH:0).proto_((specs:(seedR:\seed,seedH:\seed)))!s.times.size;
-		s.dicts.do(_.gui(2,p,b))
+		s.dicts=(
+			(seedR:0, seedH:0,time:2)
+			.proto_((specs:(seedR:\seedio,seedH:\seedio)))
+		)
+		!2;
+		s.dicts.do{arg x; x.gui(3,p,b)
+			.addAction(\time,{g.value})
+		}
 	},
-	pat:PlazyEnvir{arg seedR, seedH; 
-		Pbind(\dur, Plazy{b}, \degree, Plazy{c},
+	pat:PlazyEnvir{arg seedR, seedH;
+		//[seedR,seedH].ostln;
+		Pbind(\dur, Plazy{b}.trace, \degree, Plazy{c}.trace,
 			\mtranspose, Pseed(seedH,Prand([0,1,-1],inf)),
 			\stretch, Pseed(seedR, Prand([0.5, 0.25],inf) )
 		)
 	},
-	pat:PlazyEnvir{Pbind()},
+	//	pat:PlazyEnvir{Pbind()},
 	embedInStream:{arg s,in=();
-		in.postln;
 		s.dicts.collect({|x,i|
-			(s.pat <> s.dicts[i])
-			.finDur(Pfunc{s.times[i]}.asStream)
-		}).postln.pseq.embedInStream(in)
+			(s.pat.trace <> s.dicts[i])
+			.finDur(Pfunc{s.dicts[i].time}.asStream)
+		}).pseq.embedInStream(in)
 	} 
 );
 
@@ -68,8 +77,26 @@ d.init(t);
 ///// LINE
 t.decorator.nextLine;
 z=PlayLine(t);
+// TODO add 
+// z.timeBox.addAction(
+// {	arg self=z.timeBox; var now=self.value;
+// 	r{ arg self;
+// 	loop{
+// 		var new, diff;
+// 		"youyou".postln;
+// 		new=self[0].value;
+// 		diff=self[0].value-now;
+// 		d.dicts.do { |x|
+// 			x.time=x.time+(diff/2);
+// 		};
+// 		now=new;
+// 		self=0.yield;
+// 	}
+// }.asStream
+// }.value);
 z.timeline.pattern_(Pn(d));
-// z.timeline.time_(8);
+g={z.timeline.time_(d.dicts.collect(_.time).sum.postln)};
+
 
 (line:z,fen:t)
 

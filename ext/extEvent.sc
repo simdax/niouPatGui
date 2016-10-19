@@ -9,9 +9,10 @@
 	// 		)
 	// 	}, {^this.asStream});
 	// }
-	gui{ arg ... args;
-		if(this.at(\gui).notNil, {
-			^this.at(\gui).value(this, *args)
-		}, {^super.gui(*args)});
+	gui{ arg nI,p,b,options;
+		^if(this.at(\gui).notNil, {
+			this.at(\gui).value(this, nI,p,b,options)
+		}, {super.gui(nI,p,b,options)}
+		)
 	}
 }

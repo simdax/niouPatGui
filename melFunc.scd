@@ -5,7 +5,7 @@ x//dict instr + amp
 ;
 
 b=Ouf.resketch;
-b.line.win.bounds_(Rect(0,230,400,200));
+b.line.win.bounds_(Rect(0,270,400,200));
 a=SDP.listGui(b.line.win)
 .globalAction_{arg y; x.instrument=y.item};
 x=(amp:0.2,instrument:\harpsichord1);
