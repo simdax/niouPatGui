@@ -19,30 +19,15 @@ harmo.gui(t);
 
 t.decorator.nextLine;
 
-// ACC DEF
-a=(degree:1,nb:4, amp:0.2, stretch:0.5, ambitus:[-2,2], patternR:1000.rand,)
-.parent_((
-	specs:(
-		ambitus:[-7,7,nil,1],
-		nb:[1,10,nil,0.5],
-		stretch:[1,4,\exp,1],
-		dur:[0.5,2,nil,0.5],
-		degree:[-7,7,nil,1],
-		patternR:[0,10000,nil,1],
-		amp:\amp,
-	),
-	pat:Pbind(\type, \appo,
-		\amp, Pfunc{~amp},
-		\degree, Pfunc{~degree},
-		\mtranspose, Plazy{
-			Pseed(~patternR,Pwhite(*~ambitus).round(1))},
-		\stretch, Pfunc{~stretch/2},
-	),
-	embedInStream:{arg s,in=();
+a=Ouf.acc;
+
+a.parent.put(\embedInStream,
+	{arg s,in=();
 		s.use{(~pat.fin(~nb)<>Pn(harmo)).embedInStream(in)}
 	}
-));
+);
 
+// ACC DEF
 tabV=TabbedView2(bounds:Rect(900,0, 300,400));
 i=0;
 
